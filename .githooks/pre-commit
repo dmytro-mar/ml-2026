@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -x .venv/Scripts/python.exe ]; then
+    PY=.venv/Scripts/python.exe
+elif [ -x .venv/bin/python ]; then
+    PY=.venv/bin/python
+else
+    echo "pre-commit: .venv not found, run 'make' first" >&2
+    exit 1
+fi
+
+git diff --cached --name-only --diff-filter=ACMR -- '*.ipynb' | while read nb; do
+    echo "pre-commit: compiling $nb"
+    "$PY" -m jupyter nbconvert --to notebook --execute --inplace --log-level=WARN "$nb" || exit 1
+    git add -- "$nb"
+done
