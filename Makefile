@@ -9,9 +9,9 @@ else
     VENV_PY := $(VENV)/bin/python
 endif
 
-.PHONY: all venv kernel clean
+.PHONY: all venv kernel hooks clean
 
-all: kernel
+all: kernel hooks
 
 venv: $(VENV)/.installed
 
@@ -25,6 +25,9 @@ $(VENV)/.installed: $(VENV_PY) requirements.txt
 
 kernel: venv
 	$(VENV_PY) -m ipykernel install --user --name $(KERNEL) --display-name "Python ($(KERNEL))"
+
+hooks:
+	git config core.hooksPath .githooks
 
 clean:
 	-$(VENV_PY) -m jupyter kernelspec uninstall -y $(KERNEL)
